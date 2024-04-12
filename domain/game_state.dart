@@ -1,5 +1,5 @@
 class GameState {
-  int level;
+  String level;
   bool isCorrectAnswer;
 
   GameState(

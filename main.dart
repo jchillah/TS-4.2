@@ -4,23 +4,19 @@ import 'domain/screen_state.dart';
 import 'domain/theme.dart';
 import 'domain/video_content.dart';
 
-void main() {
+void main() async {
   MockDatabase databaseRepository = MockDatabase();
-/**
-  List<Level> levels = databaseRepository.getLevels();
-  ScreenState screenStates = databaseRepository.getScreenState();
-  List<Theme> themes = databaseRepository.getThemes();
-  List<VideoContent> videoContents = databaseRepository.getVideoContents();
-**/
+
+  // Neue Level hinzufügen
   Level newLevel = Level(theme: 'New Theme', animals: []);
   databaseRepository.addLevel(newLevel);
   print('Added new level: ' + newLevel.theme);
 
   // Aktualisierte Liste der Levels abrufen und ausgeben
-  List<Level> updatedLevels = databaseRepository.getLevels();
+  List<Level> updatedLevels = await databaseRepository.getLevels();
   print('Updated levels: $updatedLevels');
 
- // Beispiel: Aktualisieren des Bildschirmzustands in der Datenbank
+  // Beispiel: Aktualisieren des Bildschirmzustands in der Datenbank
   ScreenState newScreenState = ScreenState('New message', true);
   databaseRepository.updateScreenState(newScreenState);
   print('Updated screen state: $newScreenState');
@@ -31,8 +27,9 @@ void main() {
   print('Added new theme: $newTheme');
 
   // Beispiel: Hinzufügen eines neuen Videoinhalts zur Datenbank
-  VideoContent newVideoContent = VideoContent('New Video Path', 'New Description', videoPath: '', description: '');
+  VideoContent newVideoContent = VideoContent(
+      'New Video Path', 'New Description',
+      videoPath: '', description: '');
   databaseRepository.addVideoContent(newVideoContent);
   print('Added new video content: $newVideoContent');
 }
-

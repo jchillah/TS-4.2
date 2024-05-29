@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import '../domain/animal.dart';
-import 'database_repository.dart';
-import '../domain/quiz_question.dart';
 import '../domain/level.dart';
+import '../domain/quiz_question.dart';
 import '../domain/screen_state.dart';
 import '../domain/theme.dart';
 import '../domain/video_content.dart';
+import 'database_repository.dart';
 
 class MockDatabase implements DatabaseRepository {
   List<Level> levels = [];
@@ -13,29 +15,45 @@ class MockDatabase implements DatabaseRepository {
   List<VideoContent> videoContents = [];
   ScreenState screenState = ScreenState('Default message', false);
 
+  Future<void> _simulateNetworkDelay() async {
+    await Future.delayed(Duration(
+        seconds: 1 + (2 * (DateTime.now().millisecondsSinceEpoch % 2))));
+  }
+
   @override
-  List<Level> getLevels() {
+  Future<List<Level>> getLevels() async {
+    await _simulateNetworkDelay();
     return levels;
   }
 
   @override
-  List<QuizQuestion> getQuizQuestions() {
+  Future<List<QuizQuestion>> getQuizQuestions() async {
+    await _simulateNetworkDelay();
     return quizQuestions;
   }
 
   @override
-  ScreenState getScreenState() {
+  Future<ScreenState> getScreenState() async {
+    await _simulateNetworkDelay();
     return screenState;
   }
 
   @override
-  List<Theme> getThemes() {
+  Future<List<Theme>> getThemes() async {
+    await _simulateNetworkDelay();
     return themes;
   }
 
   @override
-  List<VideoContent> getVideoContents() {
+  Future<List<VideoContent>> getVideoContents() async {
+    await _simulateNetworkDelay();
     return videoContents;
+  }
+
+  @override
+  Future<VideoContent?> getSoundPath(Animal animal) async {
+    await _simulateNetworkDelay();
+    return null;
   }
 
   void addLevel(Level newLevel) {
@@ -61,34 +79,18 @@ class MockDatabase implements DatabaseRepository {
   void addAnimal(Animal newAnimal) {
     // Logik für die Bearbeitung von Tieren hinzufügen
   }
-  
+
   void updateAnimal(String animalName, Animal updatedAnimal) {
-  // Suche das Tier in der Liste
-  int index = levels.indexWhere((level) =>
-      level.animals.any((animal) => animal.name == animalName));
+    // Suche das Tier in der Liste
+    int index = levels.indexWhere(
+        (level) => level.animals.any((animal) => animal.name == animalName));
 
-  if (index != -1) {
-    // Aktualisiere das Tier, falls gefunden
-    levels[index].animals.removeWhere((animal) => animal.name == animalName);
-    levels[index].animals.add(updatedAnimal);
-  } else {
-    print("Das Tier '$animalName' wurde nicht gefunden.");
-  }
-}
-
- @override
-VideoContent? getSoundPath(Animal animal) {
-  // Durchsuche die Liste der Level nach dem Tier
-  for (var level in levels) {
-    for (var animalInLevel in level.animals) {
-      if (animalInLevel.name == animal.name) {
-        // Wenn das Tier gefunden wird, gib den SoundPath zurück
-        return animalInLevel.soundPath;
-      }
+    if (index != -1) {
+      // Aktualisiere das Tier, falls gefunden
+      levels[index].animals.removeWhere((animal) => animal.name == animalName);
+      levels[index].animals.add(updatedAnimal);
+    } else {
+      print("Das Tier '$animalName' wurde nicht gefunden.");
     }
   }
-  // Gib null zurück, wenn das Tier nicht gefunden wird
-  return null;
-}
-
 }
